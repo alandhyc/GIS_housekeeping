@@ -583,3 +583,57 @@ df_bin_index<-function(df,column,n){
   return(df)
   
 } #End of df_bin_index function
+
+
+
+#Alternative function for st_intersects
+#Returns a dataframe with four columns:
+#1. Row name of sf1 feature
+#2. Row name of sf2 feature that overlaps with the sf1 feature
+#3. Percentage of sf1 feature area that is overlapping
+#4. Percentage of sf2 feature area that is overlapping
+
+st_area_intersects<-function(sf1,sf2){
+
+  require(sf)
+  
+  intersections<-st_intersects(sf1,sf2)
+  
+  intersections<-lapply(1:length(intersections),function(sf1_feature_num){
+    
+    row_num<-intersections[[sf1_feature_num]]
+    
+    if(length(row_num)==0){
+      
+      tdf<-data.frame(
+        sf1_row = sf1_feature_num,
+        sf2_ovl_row = NA,
+        sf1_ovl_perc = NA,
+        sf2_ovl_perc = NA
+      )
+      
+      return(tdf)
+      
+    } else {
+      tsf1<-sf1[sf1_feature_num,]
+      tsf2<-sf2[row_num,]
+      t_ovlp<-st_intersection(tsf1,tsf2)
+      ovl_area<-as.numeric(st_area(t_ovlp))
+      
+      row_num<-row_num[which(ovl_area==max(ovl_area,
+                                           na.rm = T))]
+      
+      tdf<-data.frame(
+        sf1_row = sf1_feature_num,
+        sf2_ovl_row = row_num,
+        sf1_ovl_perc = ovl_area/as.numeric(st_area(tsf1)),
+        sf2_ovl_perc = ovl_area/as.numeric(st_area(tsf2))
+      )
+      
+      return(tdf)
+    }
+    
+  }) #End of lapply
+  
+  intersections<-do.call(rbind,intersections)
+  }
