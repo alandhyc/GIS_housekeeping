@@ -637,3 +637,27 @@ st_area_intersects<-function(sf1,sf2){
   
   intersections<-do.call(rbind,intersections)
   }
+
+
+#Function to create file path dataframes
+create_fpdf<-function(filepath,
+                      grep_pattern,
+                      id_pattern,
+                      id_name = "id",
+                      full.name = T,
+                      recursive = F){
+
+  require(stringr)
+
+  file_list<-list.files(filepath, full.name = full.name, recursive = recursive)
+  file_list<-grep(grep_pattern,file_list,value = T)
+  
+  file_list<-data.frame(
+    filepath = file_list,
+    attribute = str_extract(file_list,id_pattern)
+  )
+
+  names(file_list)[2]<-id_name
+
+  return(file_list)
+}
