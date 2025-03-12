@@ -658,3 +658,60 @@ fpdf_create<-function(filepath,
 
   return(file_list)
 }
+
+
+
+# Function to create bounding boxes from raster files.
+# The advantage of this function is that rasters do not need to be read into memory
+# The input is a vector of filepaths, the output is an sf object
+
+raster_bbox_to_sf<-function(filepaths,crs,id_pattern="none"){
+
+  require(sf)
+  require(dplyr)
+  require(gdalUtilities)
+  require(stringr)
+  
+  bbox_list<-lapply(filepaths,function(fp){
+
+    ullr<-get_ullr(fp)
+    ul<-c(ullr[1],ullr[2])
+    lr<-c(ullr[3],ullr[4])
+    
+    # Create a rectangular polygon (order matters: counterclockwise)
+    rect_coords <- matrix(
+      c(ul[1], ul[2],  # Top-left
+        lr[1], ul[2],  # Top-right
+        lr[1], lr[2],  # Bottom-right
+        ul[1], lr[2],  # Bottom-left
+        ul[1], ul[2]), # Close the polygon (back to top-left)
+      ncol = 2, byrow = TRUE
+    )
+    
+    # Convert to an sf polygon
+    rectangle <- st_sfc(st_polygon(list(rect_coords)), crs = crs)  # Specify CRS (WGS84)
+    
+    # Create an sf object
+    rectangle_sf <- st_sf(geometry = rectangle)
+    
+    rectangle_sf<-rectangle_sf %>% 
+      mutate(filepath = fp,.before = 1)
+
+    if(id_pattern!="none"){
+
+      retangle_sf<-retangle_sf %>%
+        mutate(id = str_extract(fp,id_pattern))
+      
+    }
+    
+    return(rectangle_sf)
+    
+  }) #End of lapply
+
+  #Bind the list of sfs back together
+
+  bbox_list<-do.call(rbind,bbox_list)
+
+  return(bbox_list)
+  
+}
