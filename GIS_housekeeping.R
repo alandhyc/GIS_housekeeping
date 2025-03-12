@@ -689,7 +689,7 @@ raster_bbox_to_sf<-function(filepaths,crs,id_pattern="none"){
     )
     
     # Convert to an sf polygon
-    rectangle <- st_sfc(st_polygon(list(rect_coords)), crs = crs)  # Specify CRS (WGS84)
+    rectangle <- st_sfc(st_polygon(list(rect_coords)), crs = crs)  # Specify CRS (EPSG code)
     
     # Create an sf object
     rectangle_sf <- st_sf(geometry = rectangle)
@@ -699,7 +699,7 @@ raster_bbox_to_sf<-function(filepaths,crs,id_pattern="none"){
 
     if(id_pattern!="none"){
 
-      retangle_sf<-retangle_sf %>%
+      rectangle_sf<-rectangle_sf %>%
         mutate(id = str_extract(fp,id_pattern))
       
     }
