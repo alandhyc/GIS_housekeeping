@@ -620,9 +620,6 @@ st_area_intersects<-function(sf1,sf2){
       t_ovlp<-st_intersection(tsf1,tsf2)
       ovl_area<-as.numeric(st_area(t_ovlp))
       
-      row_num<-row_num[which(ovl_area==max(ovl_area,
-                                           na.rm = T))]
-      
       tdf<-data.frame(
         sf1_row = sf1_feature_num,
         sf2_ovl_row = row_num,
