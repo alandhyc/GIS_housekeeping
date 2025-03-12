@@ -617,7 +617,7 @@ st_area_intersects<-function(sf1,sf2){
     } else {
       tsf1<-sf1[sf1_feature_num,]
       tsf2<-sf2[row_num,]
-      t_ovlp<-st_intersection(tsf1,tsf2)
+      t_ovlp<-suppressWarnings(st_intersection(tsf1,tsf2))
       ovl_area<-as.numeric(st_area(t_ovlp))
       
       tdf<-data.frame(
