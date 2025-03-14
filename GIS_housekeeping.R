@@ -355,7 +355,7 @@ st_find_intersect<-function(sf1,sf2,intersect=T){
 # 1.16 MatchExtRes 
 
 
-MatchExtRes<-function(source_r_fp,target_r_fp,output_r_fp,resampling="bilinear",thickness=NA,terra=F,srcnodata="None",a_srs = NA){
+MatchExtRes<-function(source_r_fp,target_r_fp,output_r_fp,resampling="bilinear",thickness=NA,terra=F,raster=F,srcnodata="None",a_srs = NA){
   
   
   require(gdalUtilities)
@@ -368,7 +368,7 @@ MatchExtRes<-function(source_r_fp,target_r_fp,output_r_fp,resampling="bilinear",
   
   if(terra == T){
     
-    #Terra method to create new raster
+    #1. Terra method to create new raster
     
     require(terra)
     
@@ -385,11 +385,37 @@ MatchExtRes<-function(source_r_fp,target_r_fp,output_r_fp,resampling="bilinear",
     
     terra::writeRaster(er,output_r_fp)
     
-  } else {
+  } else if (raster==T){
+
+    #2. raster() method to create new raster
     
     require(raster)
+
+    if(is.na(thickness)==T){
+      
+      temp_raster<-raster::stack(source_r_fp)
+      thickness<-raster::nlayers(temp_raster)
+      rm(temp_raster)
+      
+    }
+
+    tr<-raster(target_r_fp)
+    er<-raster(raster::extent(tr),resolution = raster::res(tr),crs = raster::crs(tr))
     
-    #gdal_create method to create new raster
+    if(thickness>1){
+      for(1:thickness){
+        er<-raster::stack(er,er)
+      }
+    }
+    
+    writeRaster(er,output_r_fp)
+    
+    
+  } else {
+    
+    #3. gdal_create method to create new raster
+
+    require(raster)
     
     if(is.na(thickness)==T){
       
