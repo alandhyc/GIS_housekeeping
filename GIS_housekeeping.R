@@ -403,7 +403,7 @@ MatchExtRes<-function(source_r_fp,target_r_fp,output_r_fp,resampling="bilinear",
     er<-raster(raster::extent(tr),resolution = raster::res(tr),crs = raster::crs(tr))
     
     if(thickness>1){
-      for(i in 1:thickness){
+      for(i in 1:(thickness-1)){
         er<-raster::stack(er,er)
       }
     }
