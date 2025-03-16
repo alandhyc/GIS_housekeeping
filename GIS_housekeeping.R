@@ -405,6 +405,7 @@ MatchExtRes<-function(source_r_fp,target_r_fp,output_r_fp,resampling="bilinear",
     
     if(thickness>1){
       er<-stack(replicate(thickness,er))
+      er<-brick(er)
     }
     
     writeRaster(er,output_r_fp)
