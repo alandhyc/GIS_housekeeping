@@ -401,11 +401,10 @@ MatchExtRes<-function(source_r_fp,target_r_fp,output_r_fp,resampling="bilinear",
 
     tr<-raster(target_r_fp)
     er<-raster(raster::extent(tr),resolution = raster::res(tr),crs = raster::crs(tr))
+    values(er)<-NA
     
     if(thickness>1){
-      for(i in 1:(thickness-1)){
-        er<-raster::stack(er,er)
-      }
+      er<-stack(replicate(thickness,er))
     }
     
     writeRaster(er,output_r_fp)
