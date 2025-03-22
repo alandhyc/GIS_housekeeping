@@ -496,6 +496,8 @@ binned_plot<-function(x_var,y_var,n_bins = 12){
   
   df<-data.frame(x = x_var,
                  y = y_var)
+
+  df<-na.omit(df)
   
   #Define bins using quantiles
   
