@@ -625,7 +625,7 @@ st_area_intersects<-function(sf1,sf2){
 
   require(sf)
   
-  intersections<-st_intersects(sf1,sf2)
+  intersections<-st_relate(sf1,sf2,pattern = "T********")
   
   intersections<-lapply(1:length(intersections),function(sf1_feature_num){
     
