@@ -538,11 +538,11 @@ rename_geometry <- function(g, name){
 #This function gets ullr from a filepath to a raster
 #We use gdal to avoid loading things into R
 
-get_ullr<-function(raster_fp){
+get_ullr<-function(raster_fp,quiet = T){
   
   require(gdalUtilities)
   
-  gdalinfo_lines<-gdalinfo(raster_fp)
+  gdalinfo_lines<-gdalinfo(raster_fp,quiet = quiet)
   
   # Split the output into lines
   gdalinfo_lines <- strsplit(gdalinfo_lines, "\n")[[1]]
